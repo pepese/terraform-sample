@@ -38,3 +38,15 @@ variable "state_bucket" {
 variable "state_key" {
   default = ""
 }
+
+variable "state_key_vpc" {
+  default = ""
+}
+
+variable "ami" {
+  default = ""
+}
+
+variable "instance_type" {
+  default = ""
+}

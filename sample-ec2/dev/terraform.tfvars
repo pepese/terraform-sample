@@ -1,4 +1,7 @@
 region = "ap-northeast-1"
 env = "dev"
 state_bucket = "tfstate-pepese"
-state_key = "sample/dev/vpc/terraform.tfstate"
+state_key = "sample/dev/ec2/terraform.tfstate"
+state_key_vpc = "sample/dev/vpc/terraform.tfstate"
+ami = "ami-0d9f010af20ed89f8"
+instance_type = "t3.nano"
