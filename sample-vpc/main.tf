@@ -32,85 +32,85 @@ resource "aws_vpc_dhcp_options_association" "vpc" {
 # Subnet Settings
 #####################################
 
-resource "aws_subnet" "public_subnet_a" {
+resource "aws_subnet" "subnet-public-1a" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1a"
   cidr_block                      = "10.0.0.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-public-subnet-a"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-public-1a"))
 }
 
-resource "aws_subnet" "public_subnet_c" {
+resource "aws_subnet" "subnet-public-1c" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1c"
   cidr_block                      = "10.0.1.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-public-subnet-c"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-public-1c"))
 }
 
-resource "aws_subnet" "public_subnet_d" {
+resource "aws_subnet" "subnet-public-1d" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1d"
   cidr_block                      = "10.0.2.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-public-subnet-d"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-public-1d"))
 }
 
-resource "aws_subnet" "cluster_subnet_a" {
+resource "aws_subnet" "subnet-protected-1a" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1a"
   cidr_block                      = "10.0.64.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-private-subnet-a"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-protected-1a"))
 }
 
-resource "aws_subnet" "cluster_subnet_c" {
+resource "aws_subnet" "subnet-protected-1c" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1c"
   cidr_block                      = "10.0.65.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-cluster-subnet-c"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-protected-1c"))
 }
 
-resource "aws_subnet" "cluster_subnet_d" {
+resource "aws_subnet" "subnet-protected-1d" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1d"
   cidr_block                      = "10.0.66.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-cluster-subnet-d"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-protected-1d"))
 }
 
-resource "aws_subnet" "private_subnet_a" {
+resource "aws_subnet" "subnet-private-1a" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1a"
   cidr_block                      = "10.0.128.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-cluster-subnet-a"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-private-1a"))
 }
 
-resource "aws_subnet" "private_subnet_c" {
+resource "aws_subnet" "subnet-private-1c" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1c"
   cidr_block                      = "10.0.129.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-private-subnet-c"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-private-1c"))
 }
 
-resource "aws_subnet" "private_subnet_d" {
+resource "aws_subnet" "subnet-private-1d" {
   vpc_id                          = aws_vpc.vpc.id
   availability_zone               = "ap-northeast-1d"
   cidr_block                      = "10.0.130.0/24"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = false
-  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-private-subnet-d"))
+  tags                            = merge(local.base_tags, map("Name", "${local.base_name}-subnet-private-1d"))
 }
 
 #####################################
@@ -126,47 +126,47 @@ resource "aws_internet_gateway" "igw" {
 # NAT Gateway Settings
 #####################################
 
-resource "aws_eip" "ngw_ip_a" {
+resource "aws_eip" "ngw-ip-1a" {
   vpc  = true
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-a"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-1a"))
 }
 
-resource "aws_eip" "ngw_ip_c" {
+resource "aws_eip" "ngw-ip-1c" {
   vpc  = true
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-c"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-1c"))
 }
 
-resource "aws_eip" "ngw_ip_d" {
+resource "aws_eip" "ngw-ip-1d" {
   vpc  = true
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-d"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-ip-1d"))
 }
 
-resource "aws_nat_gateway" "ngw_a" {
-  allocation_id = aws_eip.ngw_ip_a.id
-  subnet_id     = aws_subnet.public_subnet_a.id
+resource "aws_nat_gateway" "ngw-1a" {
+  allocation_id = aws_eip.ngw-ip-1a.id
+  subnet_id     = aws_subnet.subnet-public-1a.id
   depends_on    = [aws_internet_gateway.igw]
-  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-a"))
+  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-1a"))
 }
 
-resource "aws_nat_gateway" "ngw_c" {
-  allocation_id = aws_eip.ngw_ip_c.id
-  subnet_id     = aws_subnet.public_subnet_c.id
+resource "aws_nat_gateway" "ngw-1c" {
+  allocation_id = aws_eip.ngw-ip-1c.id
+  subnet_id     = aws_subnet.subnet-public-1c.id
   depends_on    = [aws_internet_gateway.igw]
-  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-c"))
+  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-1c"))
 }
 
-resource "aws_nat_gateway" "ngw_d" {
-  allocation_id = aws_eip.ngw_ip_d.id
-  subnet_id     = aws_subnet.public_subnet_d.id
+resource "aws_nat_gateway" "ngw-1d" {
+  allocation_id = aws_eip.ngw-ip-1d.id
+  subnet_id     = aws_subnet.subnet-public-1d.id
   depends_on    = [aws_internet_gateway.igw]
-  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-d"))
+  tags          = merge(local.base_tags, map("Name", "${local.base_name}-ngw-1d"))
 }
 
 #####################################
 # Route Table Settings
 #####################################
 
-resource "aws_route_table" "igw_rtb" {
+resource "aws_route_table" "igw-rtb" {
   vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
@@ -175,63 +175,63 @@ resource "aws_route_table" "igw_rtb" {
   tags = merge(local.base_tags, map("Name", "${local.base_name}-igw-rtb"))
 }
 
-resource "aws_route_table" "ngw_rtb_a" {
+resource "aws_route_table" "ngw-rtb-1a" {
   vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw_a.id
+    gateway_id = aws_nat_gateway.ngw-1a.id
   }
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-a"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-1a"))
 }
 
-resource "aws_route_table" "ngw_rtb_c" {
+resource "aws_route_table" "ngw-rtb-1c" {
   vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw_c.id
+    gateway_id = aws_nat_gateway.ngw-1c.id
   }
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-c"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-1c"))
 }
 
-resource "aws_route_table" "ngw_rtb_d" {
+resource "aws_route_table" "ngw-rtb-1d" {
   vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw_d.id
+    gateway_id = aws_nat_gateway.ngw-1d.id
   }
-  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-d"))
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-ngw-rtb-1d"))
 }
 
 #####################################
 # Route Table Association Settings
 #####################################
 
-resource "aws_route_table_association" "igw_rtba_a" {
-  subnet_id      = aws_subnet.public_subnet_a.id
-  route_table_id = aws_route_table.igw_rtb.id
+resource "aws_route_table_association" "igw-rtba-1a" {
+  subnet_id      = aws_subnet.subnet-public-1a.id
+  route_table_id = aws_route_table.igw-rtb.id
 }
 
-resource "aws_route_table_association" "igw_rtba_c" {
-  subnet_id      = aws_subnet.public_subnet_c.id
-  route_table_id = aws_route_table.igw_rtb.id
+resource "aws_route_table_association" "igw-rtba-1c" {
+  subnet_id      = aws_subnet.subnet-public-1c.id
+  route_table_id = aws_route_table.igw-rtb.id
 }
 
-resource "aws_route_table_association" "igw_rtba_d" {
-  subnet_id      = aws_subnet.public_subnet_d.id
-  route_table_id = aws_route_table.igw_rtb.id
+resource "aws_route_table_association" "igw-rtba-1d" {
+  subnet_id      = aws_subnet.subnet-public-1d.id
+  route_table_id = aws_route_table.igw-rtb.id
 }
 
-resource "aws_route_table_association" "ngw_rtba_a" {
-  subnet_id      = aws_subnet.cluster_subnet_a.id
-  route_table_id = aws_route_table.ngw_rtb_a.id
+resource "aws_route_table_association" "ngw-rtba-1a" {
+  subnet_id      = aws_subnet.subnet-protected-1a.id
+  route_table_id = aws_route_table.ngw-rtb-1a.id
 }
 
-resource "aws_route_table_association" "ngw_rtba_c" {
-  subnet_id      = aws_subnet.cluster_subnet_c.id
-  route_table_id = aws_route_table.ngw_rtb_c.id
+resource "aws_route_table_association" "ngw-rtba-1c" {
+  subnet_id      = aws_subnet.subnet-protected-1c.id
+  route_table_id = aws_route_table.ngw-rtb-1c.id
 }
 
-resource "aws_route_table_association" "ngw_rtba_d" {
-  subnet_id      = aws_subnet.cluster_subnet_d.id
-  route_table_id = aws_route_table.ngw_rtb_d.id
+resource "aws_route_table_association" "ngw-rtba-1d" {
+  subnet_id      = aws_subnet.subnet-protected-1d.id
+  route_table_id = aws_route_table.ngw-rtb-1d.id
 }

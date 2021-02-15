@@ -43,6 +43,10 @@ variable "state_key_vpc" {
   default = ""
 }
 
+variable "state_key_lb" {
+  default = ""
+}
+
 variable "ami" {
   default = ""
 }
