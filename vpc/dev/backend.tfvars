@@ -3,5 +3,5 @@
 #####################################
 
 bucket = "tfstate-pepese"
-key = "sample/dev/ec2/terraform.tfstate"
+key    = "sample/dev/network/terraform.tfstate"
 region = "ap-northeast-1"

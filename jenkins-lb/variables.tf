@@ -4,11 +4,11 @@
 
 locals {
   base_tags = {
-    Project     = var.project
-    Terraform   = "true"
-    Env = var.env
+    System    = var.system
+    Env       = var.env
+    Terraform = "true"
   }
-  base_name       = "${var.project}-${var.env}"
+  base_name = "${var.system}-${var.env}"
 }
 
 #####################################
@@ -19,8 +19,8 @@ variable "access_key" {}
 
 variable "secret_key" {}
 
-variable "project" {
-  default = "pepese"
+variable "system" {
+  default = ""
 }
 
 variable "region" {
@@ -35,10 +35,10 @@ variable "state_bucket" {
   default = ""
 }
 
-variable "state_key" {
+variable "state_key_self" {
   default = ""
 }
 
-variable "state_key_vpc" {
+variable "state_key_network" {
   default = ""
 }

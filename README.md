@@ -5,9 +5,18 @@
 個別リソースで操作していく。
 
 ```bash
+# terraform の環境変数を設定
+$ export TF_VAR_access_key=xxx
+$ export TF_VAR_secret_key=xxx
+
+# ファイルフォーマット
+$ cd [対象リソース]/[環境]
+$ terraform fmt ..
+$ terraform fmt
+
 # 個別のリソースのterraform 初期化
 $ cd [対象リソース]/[環境]
-$ terraform init -backend-config=backend.tf ..
+$ terraform init -backend-config=backend.tfvars ..
 
 # 個別のリソースの設定確認
 $ cd [対象リソース]/[環境]
@@ -31,9 +40,9 @@ $ terraform destroy ..
 ```bash
 $ tree -L 3
 .
-└── [AWSサービス単位] # 作成する AWS サービス名（ex. xxx-vpc, xxx-lb, xxx-dynamodb,,,)
+└── [対象リソース] # 作成する AWS サービス名（ex. xxx-vpc, xxx-lb, xxx-dynamodb,,,)
     ├── dev    # 環境差分用ディレクトリ（必要分だけ作成）
-    │   ├── backend.tf       # tfstate ファイルを保存する S3 bucket/key/region 情報を代入
+    │   ├── backend.tfvars   # tfstate ファイルを保存する S3 bucket/key/region 情報を代入
     │   └── terraform.tfvars # variables.tf で定義した変数へ値を代入
     ├── tst
     │   ├── backend.tf
@@ -49,16 +58,27 @@ $ tree -L 3
     └── versions.tf  # terraform のバージョンを記載
 ```
 
-## 設計
+### 共通設計・規約
 
-### 共通
+- 構成について
+  - 対象リソースは、AWSサービス単位(Elasticache、DynamoDB等)でディレクトリを切り、dev/tst/prd環境で命名以外の環境差分が出ないようにする
+  - 環境(dev/tst/prdなど)毎にディレクトリを切り、 `backend.tfvars` と `terraform.tfvars` を作成する
+  - 意図しない構成差分を発生させない為に各リソース内の `variables.tf` 内の変数の値は原則空白とし、環境毎に作成したディレクトリ内の `terraform.tfvars` にて、変数の値を代入する
+- `resource` について
+  - `resource` 名はスネークケースで簡潔に
+  - `resource` の `name` 属性は記載せず、 `Name` tag で名称を付与する
+- タグ付け
+  - `tags` 属性のある `resource` には以下のタグをつける
+    - `System`：システムを識別可能な文字列。
+    - `Env`：環境名（dev/tst/prdなど）。
+    - `Terraform`："true"。 Terraform で作成した目印。
+    - `Name`：命名規則で定めたリソース名称。ケバブケースで記載し、「`[System]-[Env]-[リソースに合わせた任意名称]`」の形式。
+    - `Project`：プロジェクト名を識別する文字列。（現在未適用）
+    - `Service`：サービス名を識別する文字列。（現在未適用）
 
-- AWSサービス単位(Elasticache、DynamoDB等)でディレクトリを切り、dev/tst/prd環境で命名以外の環境差分が出ないようにする
-- 環境(dev/tst/prdなど)毎にディレクトリを切り、 `backend.tf` と `terraform.tfvars` を作成する
-- 意図しない構成差分を発生させない為に各リソース内の `variables.tf` 内の変数の値は原則空白とし、環境毎に作成したディレクトリ内の `terraform.tfvars` にて、変数の値を代入する
-- `resource` の `name` 属性は記載せず、 `Name` tag で名称を付与する
+## 対象リソース
 
-### sample-vpc
+### vpc
 
 - VPCに割り当てるセグメントは `10.0.0.0/16`
   - 以下のIPはカッコの用途のため利用できない（前4つと最後1つ）
@@ -82,7 +102,14 @@ $ tree -L 3
   - Protected：NAT経由でインターネット接続できるサブネット。AP置き場。Public サブネットからのみアクセスを許可。
   - Private：インターネットゲートウェイもNAT経由の指定のないサブネット。DB置き場。Protected サブネットからのみ接続を許可。
 
-## 接続
+### jenkins-lb
+
+- `aws_lb_target_group_attachment` リソースは `jenkins-ec2` で作成
+
+### jenkins-ec2
+
+- `jenkins-lb` のセキュリティグループからのみアクセス可能な設定
+- Jenkins などの初期構築は `UserData` を利用
 
 EC2 へのアクセスは SSM Login を行うため、 Session Manager Plugin の導入が必要。
 
