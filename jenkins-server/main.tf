@@ -33,10 +33,10 @@ resource "aws_instance" "ec2_jenkins" {
   echo '=== End TimeZone Settings ==='
 
   echo '=== Start Mount Settings ==='
-  sudo mkfs -t ext4 /dev/nvme1n1
+  sudo mkfs -t ext4 /dev/xvdh
   sudo mkdir /data
-  sudo mount /dev/nvme1n1 /data
-  echo '/dev/nvme1n1 /data ext4 defaults,nofail 0 2' >> /etc/fstab
+  sudo mount /dev/xvdh /data
+  echo '/dev/xvdh /data ext4 defaults,nofail 0 2' >> /etc/fstab
   echo '=== End Mount Settings ==='
 
   echo '=== Start Java Settings ==='
@@ -45,17 +45,36 @@ resource "aws_instance" "ec2_jenkins" {
   echo '=== End Java Settings ==='
 
   echo '=== Start Jenkins Settings ==='
-  sudo wget -P /opt https://get.jenkins.io/war-stable/2.263.4/jenkins.war
   sudo groupadd -g 1001 jenkins
   sudo useradd -g jenkins -u 1001 jenkins
+  sudo wget -P /opt https://get.jenkins.io/war-stable/2.263.4/jenkins.war
   sudo chown jenkins:jenkins /opt/jenkins.war
   sudo chmod 755 /opt/jenkins.war
   sudo mkdir /data/jenkins
   sudo chown -R jenkins:jenkins /data/jenkins
   sudo mkdir /var/log/jenkins
   sudo chown -R jenkins:jenkins /var/log/jenkins
-  su - jenkins -c 'env JENKINS_HOME=/data/jenkins java -jar /opt/jenkins.war --httpPort=8080 --prefix=/jenkins >> /var/log/jenkins/jenkins.log 2>&1 &'
+  sudo echo "[Unit]
+Description = Jenkins Daemon
+After=network.target
+
+[Service]
+User = jenkins
+Group = jenkins
+ExecStart=/bin/sh -c 'env JENKINS_HOME=/data/jenkins java -jar /opt/jenkins.war --httpPort=8080 --prefix=/jenkins >> /var/log/jenkins/jenkins.log 2>&1'
+ExecStop=/bin/kill -SIGTERM $MAINPID
+ExecReload=/bin/kill -SIGTERM $MAINPID && /bin/sh -c 'env JENKINS_HOME=/data/jenkins java -jar /opt/jenkins.war --httpPort=8080 --prefix=/jenkins >> /var/log/jenkins/jenkins.log 2>&1'
+Restart=always
+Type = simple
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/jenkins.service
+  sudo chown root:root /etc/systemd/system/jenkins.service
+  sudo chmod 644 /etc/systemd/system/jenkins.service
+  sudo systemctl daemon-reload
+  sudo systemctl enable jenkins
   echo '=== End Jenkins Settings ==='
+
   EOF
 
   tags = merge(local.base_tags, map("Name", "${local.base_name}-ec2-jenkins"))
@@ -67,14 +86,14 @@ resource "aws_instance" "ec2_jenkins" {
 
 resource "aws_ebs_volume" "ebs_jenkins" {
   availability_zone = var.az
-  type              = "standard"
+  type              = "gp2"
   size              = 20
 
   tags = merge(local.base_tags, map("Name", "${local.base_name}-ebs-jenkins"))
 }
 
 resource "aws_volume_attachment" "ebs_attach" {
-  device_name = "/dev/sdh"
+  device_name = "/dev/xvdh"
   volume_id   = aws_ebs_volume.ebs_jenkins.id
   instance_id = aws_instance.ec2_jenkins.id
 }
@@ -177,7 +196,30 @@ resource "aws_iam_instance_profile" "default_profile" {
 # LB Target Group Settings
 #####################################
 
+resource "aws_lb_target_group" "tg_jenkins" {
+  port        = 8080
+  protocol    = "HTTP"
+  target_type = "instance"
+  vpc_id      = data.terraform_remote_state.network.outputs.vpc.id
+
+  tags = merge(local.base_tags, map("Name", "${local.base_name}-tg-jenkins"))
+}
+
+resource "aws_lb_listener_rule" "rule_jenkins" {
+  listener_arn = data.terraform_remote_state.lb.outputs.lb.listener_arn
+  priority     = 100
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_jenkins.arn
+  }
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+}
+
 resource "aws_lb_target_group_attachment" "tg_jenkins_attach" {
-  target_group_arn = data.terraform_remote_state.lb.outputs.lb.tg_arn
+  target_group_arn = aws_lb_target_group.tg_jenkins.arn
   target_id        = aws_instance.ec2_jenkins.id
 }

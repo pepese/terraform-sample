@@ -102,14 +102,15 @@ $ tree -L 3
   - Protected：NAT経由でインターネット接続できるサブネット。AP置き場。Public サブネットからのみアクセスを許可。
   - Private：インターネットゲートウェイもNAT経由の指定のないサブネット。DB置き場。Protected サブネットからのみ接続を許可。
 
-### jenkins-lb
+### lb
 
-- `aws_lb_target_group_attachment` リソースは `jenkins-ec2` で作成
+- Target Group に関するリソースは `jenkins-server` で作成
 
-### jenkins-ec2
+### jenkins-server
 
-- `jenkins-lb` のセキュリティグループからのみアクセス可能な設定
+- `lb` のセキュリティグループからのみアクセス可能な設定
 - Jenkins などの初期構築は `UserData` を利用
+  - `UserData` の実行ログは `/var/log/cloud-init-output.log`
 
 EC2 へのアクセスは SSM Login を行うため、 Session Manager Plugin の導入が必要。
 
